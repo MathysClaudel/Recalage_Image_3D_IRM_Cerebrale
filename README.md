@@ -107,6 +107,6 @@ python predict_landmarks.py \
 * **Top-K Fusion :** Au lieu de faire la moyenne de tous les atlas, l'algorithme ne conserve que les $K$ atlas ayant le plus de correspondances valides (inliers), et calcule la **médiane** spatiale des prédictions pour éliminer les outliers.
 
 ## Auteur
-Mathys Claudel & Antonin Chauvet
-Professeur : Matthew Toews
+Mathys Claudel & Antonin Chauvet \
+Professeur : Matthew Toews \
 Projet réalisé dans le cadre du cours SYS818.
