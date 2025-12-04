@@ -2,7 +2,7 @@
 
 Ce projet implémente un pipeline complet pour la prédiction de points de repère anatomiques (Landmarks/AFIDs) sur des images IRM cérébrales. La méthode utilise l'extraction de features SIFT, un recalage affine robuste via RANSAC, et une fusion multi-atlas basée sur la qualité des correspondances (Top-K).
 
-## 📋 Prérequis
+## Prérequis
 
 * **Python 3.8+**
 * **Exécutable SIFT :** Le binaire `featMatchMultiple` (non inclus) doit être présent.
@@ -14,7 +14,7 @@ Ce projet implémente un pipeline complet pour la prédiction de points de repè
 
 ---
 
-## 📂 Structure des Données
+## Structure des Données
 
 Le pipeline attend une structure de fichiers standardisée (type BIDS simplifié) :
 * **Images/Features :** `sub-ID_T1w.key` (Fichiers de features SIFT extraits)
@@ -22,23 +22,25 @@ Le pipeline attend une structure de fichiers standardisée (type BIDS simplifié
 
 ---
 
-## 🛠️ Description des Scripts et Utilisation
+## Description des Scripts et Utilisation
 
 Le projet contient 3 scripts principaux, correspondant aux étapes de **Génération**, **Validation**, et **Prédiction**.
 
-### 1. `generate_matches_unified.py` (Génération des Matches)
+### 1. `generate_matches.py` (Génération des Matches)
 
 **Description :**
 Ce script automatise l'exécution de l'exécutable C `featMatchMultiple`. Il prend un dossier de patients cibles et un dossier d'atlas, calcule toutes les paires de correspondances possibles, et nettoie automatiquement les nombreux fichiers temporaires générés par le binaire. Il gère intelligemment les doublons et évite de calculer `Patient A` vs `Patient A`.
 
-**Arguments principaux :**
+**Arguments :**
 * `--patients` : Dossier des `.key` cibles.
 * `--atlases` : Dossier des `.key` sources.
+* `--output` : Dossier des `.matches.txt` de sortie.
+* `--exe` : Emplacement de l'executable featMatchMultiple.
 * `--no_rotation` : (Optionnel) Ajoute le flag `-r-` pour désactiver l'invariance en rotation.
 
 **Exemple d'utilisation :**
 ```bash
-python generate_matches_unified.py \
+python generate_matches.py \
   --patients "data/AFIDs-OASIS" \
   --atlases "data/AFIDs-HCP" \
   --output "Resultats_Matches_HCP_vers_OASIS" \
@@ -47,7 +49,7 @@ python generate_matches_unified.py \
 
 ---
 
-### 2. `analyze_topK.py` (Validation & Analyse)
+### 2. `top_K.py` (Validation & Analyse)
 
 **Description :**
 Ce script sert à valider la méthode lorsque la Vérité Terrain (GT) est connue. Il parcourt les dossiers de matches générés par le script précédent, applique l'algorithme RANSAC pour trouver la transformation, et compare la position prédite avec la position réelle (GT). Il génère un fichier CSV statistique et une courbe montrant l'erreur moyenne (TRE) en fonction du nombre d'atlas utilisés ($K$).
@@ -82,6 +84,7 @@ Il effectue le pipeline complet en une seule commande :
 
 **Arguments principaux :**
 * `--input` : Un fichier `.key` unique ou un dossier de `.key`.
+* `--atlas_dir` : Emplacement du dossier des atlas & de leurs GroundTruth.
 * `--k` : Nombre d'atlas à utiliser pour la fusion (Défaut : 12).
 * `--threshold` : Seuil de tolérance RANSAC en mm (Défaut : 15.0).
 
@@ -97,10 +100,12 @@ python predict_landmarks.py \
 
 ---
 
-## ⚙️ Méthodologie
+## Méthodologie
 
 * **RANSAC :** Utilisé avec un raffinement par moindres carrés sur les inliers pour garantir une transformation affine précise malgré le bruit.
 * **Top-K Fusion :** Au lieu de faire la moyenne de tous les atlas, l'algorithme ne conserve que les $K$ atlas ayant le plus de correspondances valides (inliers), et calcule la **médiane** spatiale des prédictions pour éliminer les outliers.
 
-## 👥 Auteur
+## Auteur
+Mathys Claudel & Antonin Chauvet
+Professeur : Matthew Toews
 Projet réalisé dans le cadre du cours SYS818.
