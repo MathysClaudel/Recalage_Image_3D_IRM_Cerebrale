@@ -87,6 +87,7 @@ Il effectue le pipeline complet en une seule commande :
 * `--atlas_dir` : Emplacement du dossier des atlas & de leurs GroundTruth.
 * `--k` : Nombre d'atlas à utiliser pour la fusion (Défaut : 12).
 * `--threshold` : Seuil de tolérance RANSAC en mm (Défaut : 15.0).
+* `--no_rotation` : active l'option -r- featMatchMultiple.
 
 **Exemple d'utilisation :**
 ```bash
