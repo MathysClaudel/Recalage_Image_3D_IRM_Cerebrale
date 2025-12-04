@@ -1,0 +1,35 @@
+# Fichiers systèmes Mac/Windows
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.env
+
+# Données médicales et clés (NE JAMAIS UPLOAD)
+*.nii
+*.nii.gz
+*.key
+*.img
+*.hdr
+*.fcsv
+*.csv
+
+# Dossiers de données (Adapter selon tes noms)
+data/
+AFIDs-*/
+featExtract*/
+
+# Dossiers de résultats et fichiers temporaires
+Resultats*/
+Predictions*/
+temp_*/
+*.img1.txt
+*.img2.txt
+*.trans.txt
+*.info.txt
+
+# Images générées
+*.png
