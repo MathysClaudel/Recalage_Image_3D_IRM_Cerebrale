@@ -21,8 +21,6 @@ def parse_arguments():
     parser.add_argument("--atlases", required=True, help="Dossier contenant les fichiers .key des images SOURCES")
     parser.add_argument("--output", required=True, help="Dossier où seront stockés les résultats")
     parser.add_argument("--exe", required=True, help="Chemin vers l'exécutable featMatchMultiple")
-    
-    # Nouvel argument pour gérer le -r-
     parser.add_argument("--no_rotation", action="store_true", help="Si activé, ajoute l'option -r- (Désactive la rotation)")
     
     return parser.parse_args()

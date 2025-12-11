@@ -132,14 +132,14 @@ def main():
     parser.add_argument("gt_target", help="Dossier GT des CIBLES (Patients)")
     parser.add_argument("gt_source", help="Dossier GT des SOURCES (Atlas)")
     
-    # Arguments Sortie (Nouveaux)
+    # Arguments Sortie 
     parser.add_argument("--output_dir", default=".", help="Dossier de sauvegarde (défaut: courant)")
-    parser.add_argument("--name_png", default="courbe_K.png", help="Nom du fichier PNG")
+    parser.add_argument("--name_png", default="courbe_K_test.png", help="Nom du fichier PNG")
     parser.add_argument("--name_csv", default="stats_K.csv", help="Nom du fichier CSV")
 
     # Arguments Paramètres
-    parser.add_argument("--min_samples", type=int, default=5)
-    parser.add_argument("--threshold", type=float, default=15.0)
+    parser.add_argument("--min_samples", type=int, default=10)
+    parser.add_argument("--threshold", type=float, default=12)
     
     args = parser.parse_args()
 
@@ -192,23 +192,38 @@ def main():
                header="K,Mean,Std", delimiter=",", fmt=["%d", "%.4f", "%.4f"])
     print(f"\nDonnées sauvegardées : {path_csv}")
 
-    # Sauvegarde PNG
     plt.figure(figsize=(10, 6))
-    plt.plot(k_axis, means, marker='o', color='#3498db', label='Erreur Moyenne')
-    plt.fill_between(k_axis, np.array(means)-np.array(stds), np.array(means)+np.array(stds), color='#2980b9', alpha=0.1, label='Écart-type')
+    plt.plot(k_axis, means, marker='o', color='#e67e22', label='Erreur Moyenne')
+    plt.fill_between(k_axis, np.array(means)-np.array(stds), np.array(means)+np.array(stds), color='#e67e22', alpha=0.1, label='Écart-type')
+
     
+    # 1. On trouve l'index du minimum
     min_err = min(means)
-    best_k = k_axis[means.index(min_err)]
-    plt.plot(best_k, min_err, marker='*', color='gold', markersize=15, markeredgecolor='black', label=f'Min: {min_err:.2f}mm (K={best_k})')
-    
-    plt.title(f"Influence de K - {args.name_csv}") # Titre dynamique
+    index_best = means.index(min_err)
+
+    # 2. On récupère le K et l'écart-type correspondants
+    best_k = k_axis[index_best]
+    best_std = stds[index_best] 
+
+    # Partie graphique
+    plt.plot(best_k, min_err, marker='*', color='gold', markersize=15, markeredgecolor='black', 
+                label=f'Min: {min_err:.2f}mm (std: {best_std:.2f}) (K={best_k})')
+
+    plt.title(f"Influence de K") 
     plt.xlabel("K (Nombre d'atlas utilisés)")
     plt.ylabel("Erreur Moyenne (mm)")
     plt.legend()
     plt.grid(True, linestyle='--', alpha=0.6)
-    
+
     plt.savefig(path_png)
     print(f"Graphique généré : {path_png}")
+
+    # 3. PRINT DANS LE TERMINAL
+    print("\n" + "="*40)
+    print(f"MEILLEUR RÉSULTAT OBTENU (K={best_k}) :")
+    print(f"Moyenne    : {min_err:.4f} mm")
+    print(f"Écart-type : {best_std:.4f} mm") 
+    print("="*40 + "\n")
 
 if __name__ == "__main__":
     main()

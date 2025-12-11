@@ -9,8 +9,7 @@ import time
 from sklearn.linear_model import RANSACRegressor
 
 """
-Script de PRÉDICTION DE LANDMARKS (Production).
-Correction : check=False pour tolérer les crashs de featMatchMultiple en fin d'exécution.
+Script de PRÉDICTION DE LANDMARKS.
 """
 
 # --- CONFIGURATION ---
@@ -107,7 +106,6 @@ def calculer_affine_ransac(pts_src, pts_dst, min_samples=5, threshold=15.0):
 # --- 3. TRAITEMENT ---
 
 def predict_single_patient(patient_key_path, args, temp_root):
-    # args contient maintenant des CHEMINS ABSOLUS (Garanti par le main)
     
     patient_filename = os.path.basename(patient_key_path)
     patient_id = patient_filename.split('_')[0].split('.')[0]
@@ -144,7 +142,7 @@ def predict_single_patient(patient_key_path, args, temp_root):
         match_file_2 = os.path.join(work_dir, f"match_{atlas_id}.img2.txt")
         
         try:
-            # MODIFICATION ICI : check=False pour tolérer les crashs en fin de process
+            
             subprocess.run(cmd, cwd=work_dir, check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             
             # Récupération
@@ -157,12 +155,11 @@ def predict_single_patient(patient_key_path, args, temp_root):
                 shutil.move(f_src_1, match_file_1)
                 if os.path.exists(f_src_2): shutil.move(f_src_2, match_file_2)
             else:
-                sys.stdout.write("x") # Pas trouvé (Vraiment échoué)
+                sys.stdout.write("x") 
                 sys.stdout.flush()
                 continue
 
         except Exception as e:
-            # Erreur Python (ex: Fichier introuvable)
             print(f"\n[ERREUR PYTHON] : {e}")
             sys.stdout.flush()
             continue
@@ -227,7 +224,6 @@ def predict_single_patient(patient_key_path, args, temp_root):
 def main():
     args = parse_arguments()
     
-    # --- CORRECTION CRITIQUE : CONVERSION ABSOLUE DES CHEMINS ---
     args.exe = os.path.abspath(args.exe)
     args.input = os.path.abspath(args.input)
     args.atlas_dir = os.path.abspath(args.atlas_dir)
